@@ -91,6 +91,7 @@ def map_city(geodf):
     nbhd = nbhds.import_geometries(nbhds.NEIGHS_ID)
     first_col = geodf.columns[0]
     fig, ax = plt.subplots(1)
+    fig.set_size_inches(20, 13)
     heat = geodf.dissolve(by='pri_neigh', aggfunc='count')
     heat = nbhd.merge(heat, on='pri_neigh', how='left').fillna(0)
     heat.plot(ax=ax, cmap='coolwarm', column=first_col, linewidth=0.8,
