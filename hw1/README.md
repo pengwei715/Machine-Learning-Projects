@@ -38,21 +38,28 @@ The following Python packages are needed to run this software:
 
 - pb_1.py: problem 1 module 
 
-    Get crime, neighborhood data. 
-    Link these two data set together. 
-    Generate the heatmap of the crime.
+    Get crime, neighborhood data
+
+    Link these two data set together
+
+    Generate the heatmap of the crime
 
 - pb_2.py: problem 2 module
     
     Get ACS data using ACS API
-    Get 2010 block data from chicago data portal.
+
+    Get 2010 block data from chicago data portal
+
     Link ACS data with block data based on Tract id
+
     Link the result of above with Crime data based on location
 
 - neighborhoods.py: helper module
 
     Get the neighborhood data
+
     Geocoding data with longitude and latitude columns
+
     Link data with zipcode
 
 #### Images file
@@ -71,13 +78,3 @@ The following Python packages are needed to run this software:
 
 * **Rayid Ghani** - *Initial work* - [Design](https://github.com/dssg/MLforPublicPolicy/tree/master/Assignments)
 * **Peng Wei** - *Main implementation* [Portfolio and cv](https://pengwei715.github.io/)
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
