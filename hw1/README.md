@@ -1,4 +1,4 @@
-# Analysis crime data of Chicago in 2017 and 2018
+# Anlysis crime data of Chicago in 2017 and 2018
 
 Using the crime data and augmented with the ACS data to identify some charecteristics in level of blocks and neighborhoods. 
 
@@ -27,15 +27,13 @@ The following Python packages are needed to run this software:
 | matplotlib | 3.0.2 |
 | numpy | 1.16.2 |
 | pandas | 0.23.4 |
-| rtree | 0.8.3 |
 | shapely | 1.6.4.post2 |
 | sodapy | 1.5.2 |
 
 ## Authors
 
-
-* **Rayid Ghani** - *Initial work* - [PurpleBooth](www.rayidghani.com)
-* **Peng Wei** - *Main implementation* - [PurpleBooth](www.pengwei.work)
+* **Rayid Ghani** - *Initial work* - [design](https://github.com/dssg/MLforPublicPolicy/tree/master/Assignments)
+* **Peng Wei** - *Main implementation*
 
 ## License
 
