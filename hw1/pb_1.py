@@ -31,9 +31,9 @@ def get_crime():
     '''
     cols = [item for item in COL_TYPES.keys()]
     client = Socrata('data.cityofchicago.org',
-                     'Lfkp6VmeW3p5ePTv0GhNSmrWh',
-                     username="pengwei@uchciago.edu",
-                     password="2h1m@k@1men")
+                     app_token,
+                     username=,
+                     password=)
     conds = "year = 2017 or year = 2018"
     res = client.get(CRIME_DATA_ID, 
                      select=",".join(cols),
@@ -54,9 +54,9 @@ def get_community():
         dataframe with community num and community name
     '''
     client = Socrata('data.cityofchicago.org',
-                     'Lfkp6VmeW3p5ePTv0GhNSmrWh',
-                     username="pengwei@uchciago.edu",
-                     password="2h1m@k@1men")
+                     app_token,
+                     username=,
+                     password=)
     res = client.get("igwz-8jzy", select = 'area_numbe, community')
     df = pd.DataFrame.from_records(res)
     df.rename(index = str, 

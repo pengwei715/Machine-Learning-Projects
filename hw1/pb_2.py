@@ -4,7 +4,6 @@ import numpy as np
 import datetime as dt
 import geopandas as gpd
 import shapely
-import json
 from census import Census
 from us import states
 import pdb
@@ -25,7 +24,7 @@ def get_acs_data():
     Return:
         pandas dataframe
     '''  
-    c = Census("3eb1575454b4de2cf12e0072bd946ecb852579d2")
+    c = Census(KEY)
     res = c.acs5.get(('NAME', 
                'B01003_001E',
                'B02001_002E',
@@ -49,9 +48,9 @@ def link_block(acs_df):
         geo dataframe of chicago
     '''
     client = Socrata('data.cityofchicago.org',
-                     'Lfkp6VmeW3p5ePTv0GhNSmrWh',
-                     username="pengwei@uchciago.edu",
-                     password="2h1m@k@1men")
+                     app_token,
+                     username=,
+                     password=)
     res = client.get("74p9-q2aq")
     df = pd.DataFrame.from_records(res)
     df.rename(index = str, 
