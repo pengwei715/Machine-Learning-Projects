@@ -5,15 +5,13 @@ Using the crime data and augmented with the ACS data to identify some charecteri
 ### Data Sources
 Data in this project comes from four sources:
 
-City of Chicago Data Portal's Crime Dataset (API): https://data.cityofchicago.org/Transportation/Transportation-Department-Permits/pubx-yq2d
+City of Chicago Data Portal's Crime Dataset (API): https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2
 
 City of Chicago Data Portal's Neighborhood Boundaries (API): https://data.cityofchicago.org/Facilities-Geographic-Boundaries/Boundaries-Neighborhoods/9wp7-iasj
 
-City of Chicago Data Portal's Block Boundaries Code Boundaries (API): https://data.cityofchicago.org/Facilities-Geographic-Boundaries/Boundaries-ZIP-Codes/gdcf-axmw
+City of Chicago Data Portal's Block Boundaries Code Boundaries (API):https://data.cityofchicago.org/Facilities-Geographic-Boundaries/Boundaries-Census-Blocks-2010/mfzt-js4n
 
-ACS website's 
-
-
+ACS website's geocoder API and 2017's one year data (API) https://www.census.gov/programs-surveys/acs/technical-documentation/table-and-geography-changes/2017/1-year.html
 
 ### Prerequisites
 
@@ -29,11 +27,15 @@ The following Python packages are needed to run this software:
 | pandas | 0.23.4 |
 | shapely | 1.6.4.post2 |
 | sodapy | 1.5.2 |
+| seaborn | 0.9.0 |
+|census | 0.8.13|
+|us |1.0.0|
+|censusgeocode|0.4.3|
 
 ## Authors
 
-* **Rayid Ghani** - *Initial work* - [design](https://github.com/dssg/MLforPublicPolicy/tree/master/Assignments)
-* **Peng Wei** - *Main implementation*
+* **Rayid Ghani** - *Initial work* - [Design](https://github.com/dssg/MLforPublicPolicy/tree/master/Assignments)
+* **Peng Wei** - *Main implementation* [Portfolio and cv](https://pengwei715.github.io/)
 
 ## License
 
