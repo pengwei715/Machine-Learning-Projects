@@ -55,16 +55,16 @@ The following Python packages are needed to run this software:
     Geocoding data with longitude and latitude columns
     Link data with zipcode
 
-####Images file
+#### Images file
 
 - Index.png: heap map of the crime of the whole data
 - theft.png: heap map of the theft type of crime
 - desp.png: heap map of the Deception type of crime.
 
-####Report and write-up:
+#### Report and write-up:
 
--Report: homework_1.ipynb
--write-up: homework_1_writeup.html
+- Report: homework_1.ipynb
+- write-up: homework_1_writeup.html
 
 
 ## Authors
