@@ -32,6 +32,41 @@ The following Python packages are needed to run this software:
 |us |1.0.0|
 |censusgeocode|0.4.3|
 
+### Files
+
+#### py files
+
+- pb_1.py: problem 1 module 
+
+    Get crime, neighborhood data. 
+    Link these two data set together. 
+    Generate the heatmap of the crime.
+
+- pb_2.py: problem 2 module
+    
+    Get ACS data using ACS API
+    Get 2010 block data from chicago data portal.
+    Link ACS data with block data based on Tract id
+    Link the result of above with Crime data based on location
+
+- neighborhoods.py: helper module
+
+    Get the neighborhood data
+    Geocoding data with longitude and latitude columns
+    Link data with zipcode
+
+####Images file
+
+- Index.png: heap map of the crime of the whole data
+- theft.png: heap map of the theft type of crime
+- desp.png: heap map of the Deception type of crime.
+
+####Report and write-up:
+
+-Report: homework_1.ipynb
+-write-up: homework_1_writeup.html
+
+
 ## Authors
 
 * **Rayid Ghani** - *Initial work* - [Design](https://github.com/dssg/MLforPublicPolicy/tree/master/Assignments)
