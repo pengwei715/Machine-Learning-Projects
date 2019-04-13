@@ -1,6 +1,6 @@
 import pandas as pd
 
-def load (csv_file, pre='/data/'):
+def load (csv_file, pre='./data/'):
     '''
     Read the csv file into pd dataframe
     Input:
@@ -8,11 +8,10 @@ def load (csv_file, pre='/data/'):
     Return:
       df: pandas data frame 
     '''
-    df = pd.read_csv(pre + csv_file)
-    return df
+    return pd.read_csv(pre + csv_file)
 
 
-def save (df, csv_file, pre='/data/'):
+def save (df, csv_file, pre='./data/'):
 	'''
 	Keep the result of to csv file
 	Input:
