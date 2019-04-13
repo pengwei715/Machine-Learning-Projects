@@ -1,10 +1,6 @@
 import pandas as pd
-import os
-import numpy as np
 
-DATA_DIR = os.getcwd() + 'data/'
-
-def load (csv_file):
+def load (csv_file, pre='/data/'):
     '''
     Read the csv file into pd dataframe
     Input:
@@ -12,8 +8,20 @@ def load (csv_file):
     Return:
       df: pandas data frame 
     '''
-    df = pd.read_csv(DATA_DIR + filename)
+    df = pd.read_csv(pre + csv_file)
     return df
-  
+
+
+def save (df, csv_file, pre='/data/'):
+	'''
+	Keep the result of to csv file
+	Input:
+	    csv_file: (string) csv file name 
+	    df: pandas dataframe
+	Return:
+	    nothing, keep the record to csv file
+	'''
+	df.to_csv(pre + csv_file, index=False)
+
 
     
