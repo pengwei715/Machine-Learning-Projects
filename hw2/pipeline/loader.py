@@ -1,6 +1,6 @@
 import pandas as pd
 
-def load (csv_file, pre='./data/'):
+def load (csv_file='credit-data.csv', pre='./data/'):
     '''
     Read the csv file into pd dataframe
     Input:
