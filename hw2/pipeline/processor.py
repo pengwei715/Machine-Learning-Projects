@@ -1,8 +1,14 @@
+'''
+Process the data
+    -- fill null with meadian
+    -- fill null with mean
+    -- drop null
+'''
 import pandas as pd
 import numpy as np
 
 
-def fill_median(df, col_lst):
+def fill_median(df, col_lst = []):
     '''
     Fills all missing values with the median value
     Inputs:
@@ -13,9 +19,9 @@ def fill_median(df, col_lst):
     if col_lst:
     	for item in col_lst:
     		df[item].fillna(df[item].median(), inplace=True)
-    df[item].fillna(df[item].median(), inplace=True)
+    df.fillna(df.median(), inplace=True)
 
-def fill_mean(df, col_lst):
+def fill_mean(df, col_lst = []):
     '''
     Fills all missing values with the mean value 
     Inputs:
@@ -26,7 +32,7 @@ def fill_mean(df, col_lst):
     if col_lst:
     	for item in col_lst:
     		df[item].fillna(df[item].mean(), inplace=True)
-    df[item].fillna(df[item].mean(), inplace=True)
+    df.fillna(df.mean(), inplace=True)
 
 def drop_na(df, col_lst):
 	'''

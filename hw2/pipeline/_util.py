@@ -1,3 +1,11 @@
+'''
+Plotting functions
+    -- plot hist of given column
+    -- plot hist of all columns
+    -- plot correlation table
+    -- plot pair wise scatter, hue as is_out
+    -- plot heat map of correlation table
+'''
 import pandas as pd 
 import numpy as np 
 import matplotlib.pyplot as plt
@@ -43,10 +51,10 @@ def plot_corr(corrs_df, y):
     Returns:
         bar plot showing correlations 
     '''
+    plt.rcParams['figure.figsize'] = 8, 6
+    corrs_df.drop(y,axis = 0, inplace =True)
     y_corr = corrs_df[y]
-    title = 'Correlation with {}'.format(y)
-    y_corr.plot.bar(title = title)
-    plt.xlabel('Variable')
+    y_corr.plot.barh(title = 'Correlation plot')
     return plt
 
 def plot_outlier(df, col_lst):
@@ -62,14 +70,15 @@ def plot_outlier(df, col_lst):
     g = sns.PairGrid(df, vars=col_lst, hue="is_out")
     return g.map(plt.scatter)
 
+def heat_corr(corr):
+    '''
+    Plot the correlation heatmap
 
-
-
-
-
-
-
-
-
-
-
+    Input: 
+        corr: dataframe of the correlation
+    Return:
+        Heatmap of the correlation pair-wise
+    '''
+    return sns.heatmap(corr, 
+        xticklabels=corr.columns,
+        yticklabels=corr.columns)
