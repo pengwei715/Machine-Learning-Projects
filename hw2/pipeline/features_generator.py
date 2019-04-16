@@ -41,3 +41,4 @@ def dummize(df, col):
     '''
     dum_df = pd.get_dummies(df[col], prefix=col)
     return  pd.concat([df, dum_df], axis = 1)
+

@@ -48,7 +48,7 @@ def get_report(y_test, pres):
 	return classification_report(y_test, pres)
 
 
-def get_roc_auc( y_test, pres):
+def get_roc_auc( y_test, x_test, model):
 	'''
 	Plot the ROC curve
 
@@ -58,8 +58,8 @@ def get_roc_auc( y_test, pres):
 	Return:
 	    ROC curve
 	'''
-	logit_roc_auc = roc_auc_score(y_test, pres)
-	fpr, tpr, thresholds = roc_curve(y_test, pres)
+	logit_roc_auc = roc_auc_score(y_test, model.predict(x_test))
+	fpr, tpr, thresholds = roc_curve(y_test,model.predict_proba(x_test)[:,1])
 	plt.figure()
 	plt.plot(fpr, tpr, label='Logistic Regression (area = %0.2f)' % logit_roc_auc)
 	plt.plot([0, 1], [0, 1],'r--')

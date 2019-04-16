@@ -56,3 +56,17 @@ def build_model(x_train, y_train):
     logreg = LogisticRegression()
     logreg.fit(x_train, y_train)
     return logreg
+
+def show_model(x_train, y_train):
+    '''
+    Build a logit regression model
+
+    Input:
+        data_x: ataframe of independent variables from trainning data
+        data_y: dataframe of dependent variable from training data
+    Return:
+        summary of statistic of the model
+    '''
+    logit_model=sm.Logit(y_train,x_train)
+    result=logit_model.fit()
+    result.summary2()
