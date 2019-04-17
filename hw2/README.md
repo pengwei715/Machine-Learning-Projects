@@ -18,7 +18,6 @@ conda env create -f environment.yml
 To activate the enviorment, simply run the following:
 
 ```
-
 conda activate hw2_env
 ```
 
