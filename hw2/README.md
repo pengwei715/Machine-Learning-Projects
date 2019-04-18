@@ -46,9 +46,6 @@ from categorical data.
 
 - write-up: homework_2_writeup.html
 
-#### Image file:
-
-- ROC curve
 
 ## Authors
 
