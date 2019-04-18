@@ -1,6 +1,6 @@
 # Financial Distress Prediction 
 
-##Skeleton of a machine learning pipe line
+## Skeleton of a machine learning pipe line
 
 ### Data Sources
 Data in this project is draw from https://www.kaggle.com/c/GiveMeSomeCredit
