@@ -93,50 +93,6 @@ def heat_corr(corr):
         xticklabels=corr.columns,
         yticklabels=corr.columns)
 
-def joint_sort_descending(l1, l2):
-    # l1 and l2 have to be numpy arrays
-    idx = np.argsort(l1)[::-1]
-    return l1[idx], l2[idx]
-
-def generate_binary_at_k(y_scores, k):
-    cutoff_index = int(len(y_scores) * (k / 100.0))
-    test_predictions_binary = [1 if x < cutoff_index else 0 for x in range(len(y_scores))]
-    return test_predictions_binary
-
-def precision_at_k(y_true, y_scores, k):
-    y_scores, y_true = joint_sort_descending(np.array(y_scores), np.array(y_true))
-    preds_at_k = generate_binary_at_k(y_scores, k)
-    #precision, _, _, _ = metrics.precision_recall_fscore_support(y_true, preds_at_k)
-    #precision = precision[1]  # only interested in precision for label 1
-    precision = precision_score(y_true, preds_at_k)
-    return precision
-
-def recall_at_k(y_true, y_scores, k):
-    y_scores_sorted, y_true_sorted = joint_sort_descending(
-        np.array(y_scores), np.array(y_true))
-    preds_at_k = generate_binary_at_k(y_scores_sorted, k)
-    recall = recall_score(y_true_sorted, preds_at_k)
-    return recall
-
-def baseline(X_train, X_test, y_train, y_test):
-    clf = DummyClassifier(strategy='stratified', random_state=0)
-    clf.fit(X_train, y_train)
-    return clf
-
-def accuracy_at_k(y_true, y_scores, k):
-    y_scores_sorted, y_true_sorted = joint_sort_descending(
-        np.array(y_scores), np.array(y_true))
-    preds_at_k = generate_binary_at_k(y_scores_sorted, k)
-    acc = accuracy_score(y_true_sorted, preds_at_k)
-    return acc
-
-def f1_at_k(y_true, y_scores, k):
-    y_scores_sorted, y_true_sorted = joint_sort_descending(
-        np.array(y_scores), np.array(y_true))
-    preds_at_k = generate_binary_at_k(y_scores_sorted, k)
-    f1 = f1_score(y_true_sorted, preds_at_k)
-    return f1
-
 def plot_precision_recall_n(y_true, y_prob, model_name, output_type):
     y_score = y_prob
     precision_curve, recall_curve, pr_thresholds = precision_recall_curve(y_true, y_score)

@@ -57,7 +57,7 @@ def clf_loop(models_to_run, clfs, grid, X_train, X_test, y_train, y_test, grid_s
                   'recall_at_50'
                   ))
     
-    baseline_clf = ut.baseline(X_train, X_test, y_train, y_test)
+    baseline_clf = ev.baseline(X_train, X_test, y_train, y_test)
 
     baseline_y_pred_probs= baseline_clf.predict_proba(X_test)[:,1]
     baseline_y_pred_probs_sorted, base_y_test_sorted = zip(*sorted(zip(baseline_y_pred_probs, y_test), reverse=True))
@@ -74,35 +74,35 @@ def clf_loop(models_to_run, clfs, grid, X_train, X_test, y_train, y_test, grid_s
                 y_pred_probs_sorted, y_test_sorted = zip(*sorted(zip(y_pred_probs, y_test), reverse=True))
                 results_df.loc[len(results_df)] = [train_start, train_end, test_start, test_end,
                     models_to_run[index],clf, p,
-                    ut.roc_auc_score(y_test, y_pred_probs),
-                    ut.precision_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,1.0),
-                    ut.precision_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,2.0),
-                    ut.precision_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,5.0),
-                    ut.precision_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,10.0),
-                    ut.precision_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,20.0),
-                    ut.precision_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,30.0),
-                    ut.precision_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,50.0),
-                    ut.accuracy_at_k(y_test_sorted,y_pred_probs_sorted,1.0),
-                    ut.accuracy_at_k(y_test_sorted,y_pred_probs_sorted,2.0),
-                    ut.accuracy_at_k(y_test_sorted,y_pred_probs_sorted,5.0),
-                    ut.accuracy_at_k(y_test_sorted,y_pred_probs_sorted,10.0),
-                    ut.accuracy_at_k(y_test_sorted,y_pred_probs_sorted,20.0),
-                    ut.accuracy_at_k(y_test_sorted,y_pred_probs_sorted,30.0),
-                    ut.accuracy_at_k(y_test_sorted,y_pred_probs_sorted,50.0),
-                    ut.precision_at_k(y_test_sorted,y_pred_probs_sorted,1.0),
-                    ut.precision_at_k(y_test_sorted,y_pred_probs_sorted,2.0),
-                    ut.precision_at_k(y_test_sorted,y_pred_probs_sorted,5.0),
-                    ut.precision_at_k(y_test_sorted,y_pred_probs_sorted,10.0),
-                    ut.precision_at_k(y_test_sorted,y_pred_probs_sorted,20.0),
-                    ut.precision_at_k(y_test_sorted,y_pred_probs_sorted,30.0),
-                    ut.precision_at_k(y_test_sorted,y_pred_probs_sorted,50.0),
-                    ut.recall_at_k(y_test_sorted,y_pred_probs_sorted,1.0),
-                    ut.recall_at_k(y_test_sorted,y_pred_probs_sorted,2.0),
-                    ut.recall_at_k(y_test_sorted,y_pred_probs_sorted,5.0),
-                    ut.recall_at_k(y_test_sorted,y_pred_probs_sorted,10.0),
-                    ut.recall_at_k(y_test_sorted,y_pred_probs_sorted,20.0),
-                    ut.recall_at_k(y_test_sorted,y_pred_probs_sorted,30.0),
-                    ut.recall_at_k(y_test_sorted,y_pred_probs_sorted,50.0)
+                    ev.roc_auc_score(y_test, y_pred_probs),
+                    ev.precision_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,1.0),
+                    ev.precision_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,2.0),
+                    ev.precision_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,5.0),
+                    ev.precision_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,10.0),
+                    ev.precision_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,20.0),
+                    ev.precision_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,30.0),
+                    ev.precision_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,50.0),
+                    ev.accuracy_at_k(y_test_sorted,y_pred_probs_sorted,1.0),
+                    ev.accuracy_at_k(y_test_sorted,y_pred_probs_sorted,2.0),
+                    ev.accuracy_at_k(y_test_sorted,y_pred_probs_sorted,5.0),
+                    ev.accuracy_at_k(y_test_sorted,y_pred_probs_sorted,10.0),
+                    ev.accuracy_at_k(y_test_sorted,y_pred_probs_sorted,20.0),
+                    ev.accuracy_at_k(y_test_sorted,y_pred_probs_sorted,30.0),
+                    ev.accuracy_at_k(y_test_sorted,y_pred_probs_sorted,50.0),
+                    ev.precision_at_k(y_test_sorted,y_pred_probs_sorted,1.0),
+                    ev.precision_at_k(y_test_sorted,y_pred_probs_sorted,2.0),
+                    ev.precision_at_k(y_test_sorted,y_pred_probs_sorted,5.0),
+                    ev.precision_at_k(y_test_sorted,y_pred_probs_sorted,10.0),
+                    ev.precision_at_k(y_test_sorted,y_pred_probs_sorted,20.0),
+                    ev.precision_at_k(y_test_sorted,y_pred_probs_sorted,30.0),
+                    ev.precision_at_k(y_test_sorted,y_pred_probs_sorted,50.0),
+                    ev.recall_at_k(y_test_sorted,y_pred_probs_sorted,1.0),
+                    ev.recall_at_k(y_test_sorted,y_pred_probs_sorted,2.0),
+                    ev.recall_at_k(y_test_sorted,y_pred_probs_sorted,5.0),
+                    ev.recall_at_k(y_test_sorted,y_pred_probs_sorted,10.0),
+                    ev.recall_at_k(y_test_sorted,y_pred_probs_sorted,20.0),
+                    ev.recall_at_k(y_test_sorted,y_pred_probs_sorted,30.0),
+                    ev.recall_at_k(y_test_sorted,y_pred_probs_sorted,50.0)
                    ]
                 name = './graphs/p_r_graph'+ models_to_run[index] + '-{}-'.format(str(train_end)) + datetime.now().strftime("%m-%d-%Y, %H:%M:%S")
                 ut.plot_precision_recall_n(y_test, y_pred_probs, name, 'save')

@@ -4,10 +4,22 @@ Evaluate the model with different matics
     -- get report
     -- get roc
 '''
+from __future__ import division
 from sklearn.linear_model import LogisticRegression
 from sklearn import metrics
 from sklearn.metrics import *
 import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+from sklearn.dummy import DummyClassifier
+from sklearn.metrics import *
+import random
+from scipy import optimize
+import time
+import seaborn as sns
+from sklearn.externals import joblib
+from datetime import datetime
+
 
 def pre(model, x_test, threshold):
     '''
@@ -99,10 +111,9 @@ def recall_at_k(y_true, y_scores, k):
     return recall
 
 def baseline(X_train, X_test, y_train, y_test):
-    clf = DummyClassifier(strategy='most_frequent', random_state=0)
+    clf = DummyClassifier(strategy='stratified', random_state=0)
     clf.fit(X_train, y_train)
-    baseline = clf.score(X_test, y_test)
-    return baseline
+    return clf
 
 def accuracy_at_k(y_true, y_scores, k):
     y_scores_sorted, y_true_sorted = joint_sort_descending(
