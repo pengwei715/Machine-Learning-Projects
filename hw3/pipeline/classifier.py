@@ -21,18 +21,13 @@ from sklearn.neighbors.nearest_centroid import NearestCentroid
 from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.dummy import DummyClassifier
 from sklearn.cross_validation import train_test_split
 from sklearn.grid_search import ParameterGrid
 from sklearn.metrics import *
 from sklearn.preprocessing import StandardScaler
-import random
-import matplotlib.pyplot as plt
-from scipy import optimize
-import time
-import seaborn as sns
 from sklearn.externals import joblib
 from datetime import datetime
+from sklearn.feature_selection import RFE
 
 # for jupyter notebooks
 #%matplotlib inline
@@ -136,31 +131,31 @@ def define_clfs_params(grid_size):
     }
     
     test_grid = { 
-    'RF':{'n_estimators': [1], 
-          'max_depth': [1], 
+    'RF':{'n_estimators': [100], 
+          'max_depth': [10], 
           'max_features': ['sqrt'],
           'min_samples_split': [10]},
     'LR': { 'penalty': ['l1'], 
             'C': [0.01]},
     'SGD': { 'loss': ['perceptron'], 
              'penalty': ['l2']},
-    'ET': { 'n_estimators': [1], 
+    'ET': { 'n_estimators': [100], 
             'criterion' : ['gini'] ,
-            'max_depth': [1], 
+            'max_depth': [10], 
             'max_features': ['sqrt'],
             'min_samples_split': [10]},
     'AB': { 'algorithm': ['SAMME'], 
-            'n_estimators': [1]},
-    'GB': {'n_estimators': [1], 
+            'n_estimators': [100]},
+    'GB': {'n_estimators': [100], 
            'learning_rate' : [0.1],
            'subsample' : [0.5], 
-           'max_depth': [1]},
+           'max_depth': [10]},
     'NB' : {},
     'DT': {'criterion': ['gini'], 
-           'max_depth': [1],
+           'max_depth': [10],
            'min_samples_split': [10]},
     'SVM' :{'C' :[0.01],'kernel':['linear']},
-    'KNN' :{'n_neighbors': [5],
+    'KNN' :{'n_neighbors': [3],
             'weights': ['uniform'],
             'algorithm': ['auto']},
     'BG' : {'n_estimators': [10], 
@@ -177,152 +172,31 @@ def define_clfs_params(grid_size):
     else:
         return 0, 0
 
-# a set of helper function to do machine learning evalaution
-
-def joint_sort_descending(l1, l2):
-    # l1 and l2 have to be numpy arrays
-    idx = np.argsort(l1)[::-1]
-    return l1[idx], l2[idx]
-
-def generate_binary_at_k(y_scores, k):
-    cutoff_index = int(len(y_scores) * (k / 100.0))
-    test_predictions_binary = [1 if x < cutoff_index else 0 for x in range(len(y_scores))]
-    return test_predictions_binary
-
-def precision_at_k(y_true, y_scores, k):
-    y_scores, y_true = joint_sort_descending(np.array(y_scores), np.array(y_true))
-    preds_at_k = generate_binary_at_k(y_scores, k)
-    #precision, _, _, _ = metrics.precision_recall_fscore_support(y_true, preds_at_k)
-    #precision = precision[1]  # only interested in precision for label 1
-    precision = precision_score(y_true, preds_at_k)
-    return precision
-
-def recall_at_k(y_true, y_scores, k):
-    y_scores_sorted, y_true_sorted = joint_sort_descending(
-        np.array(y_scores), np.array(y_true))
-    preds_at_k = generate_binary_at_k(y_scores_sorted, k)
-    recall = recall_score(y_true_sorted, preds_at_k)
-    return recall
-
-def baseline(X_train, X_test, y_train, y_test):
-    clf = DummyClassifier(strategy='most_frequent', random_state=0)
-    clf.fit(X_train, y_train)
-    return clf
-
-def accuracy_at_k(y_true, y_scores, k):
-    y_scores_sorted, y_true_sorted = joint_sort_descending(
-        np.array(y_scores), np.array(y_true))
-    preds_at_k = generate_binary_at_k(y_scores_sorted, k)
-    acc = accuracy_score(y_true_sorted, preds_at_k)
-    return acc
-
-def f1_at_k(y_true, y_scores, k):
-    y_scores_sorted, y_true_sorted = joint_sort_descending(
-        np.array(y_scores), np.array(y_true))
-    preds_at_k = generate_binary_at_k(y_scores_sorted, k)
-    f1 = f1_score(y_true_sorted, preds_at_k)
-    return f1
-
-def clf_loop(models_to_run, clfs, grid, X, y):
-    """Runs the loop using models_to_run, clfs, gridm and the data
-    """
-    results_df =  pd.DataFrame(columns=('model_type','clf', 
-                  'parameters', 'auc-roc',
-                  'baseline_at_1', 'baseline_at_2', 'baseline_at_5',
-                  'baseline_at_10', 'baseline_at_20', 'baseline_at_30',
-                  'baseline_at_50','accuracy_at_1', 'accuracy_at_2', 'accuracy_at_5',
-                  'accuracy_at_10', 'accuracy_at_20', 'accuracy_at_30',
-                  'accuracy_at_50','precision_at_1', 'precision_at_2', 'precision_at_5',
-                  'precision_at_10', 'precision_at_20', 'precision_at_30',
-                  'precision_at_50', 'recall_at_1', 'recall_at_2', 'recall_at_5',
-                  'recall_at_10', 'recall_at_20', 'recall_at_30',
-                  'recall_at_50',
-                  ))
-    for n in range(1, 2):
-        # create training and valdation sets
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
-        baseline_clf = baseline(X_train, X_test, y_train, y_test)
-        baseline_y_pred_probs= baseline_clf.predict_proba(X_test)[:,1]
-        baseline_y_pred_probs_sorted, base_y_test_sorted = zip(*sorted(zip(baseline_y_pred_probs, y_test), reverse=True))
-        for index,clf in enumerate([clfs[x] for x in models_to_run]):
-            print(models_to_run[index])
-            parameter_values = grid[models_to_run[index]]
-            for p in ParameterGrid(parameter_values):
-                try:
-                    clf.set_params(**p)
-                    y_pred_probs = clf.fit(X_train, y_train).predict_proba(X_test)[:,1]
-                    # store the model in moldes dictionary
-                    joblib.dump(clf, './models/'+ models_to_run[index] + str(p))
-                    y_pred_probs_sorted, y_test_sorted = zip(*sorted(zip(y_pred_probs, y_test), reverse=True))
-                    results_df.loc[len(results_df)] = [models_to_run[index],clf, p,
-                        roc_auc_score(y_test, y_pred_probs),
-                        accuracy_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,1.0),
-                        accuracy_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,2.0),
-                        accuracy_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,5.0),
-                        accuracy_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,10.0),
-                        accuracy_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,20.0),
-                        accuracy_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,30.0),
-                        accuracy_at_k(base_y_test_sorted,baseline_y_pred_probs_sorted,50.0),
-                        accuracy_at_k(y_test_sorted,y_pred_probs_sorted,1.0),
-                        accuracy_at_k(y_test_sorted,y_pred_probs_sorted,2.0),
-                        accuracy_at_k(y_test_sorted,y_pred_probs_sorted,5.0),
-                        accuracy_at_k(y_test_sorted,y_pred_probs_sorted,10.0),
-                        accuracy_at_k(y_test_sorted,y_pred_probs_sorted,20.0),
-                        accuracy_at_k(y_test_sorted,y_pred_probs_sorted,30.0),
-                        accuracy_at_k(y_test_sorted,y_pred_probs_sorted,50.0),
-                        precision_at_k(y_test_sorted,y_pred_probs_sorted,1.0),
-                        precision_at_k(y_test_sorted,y_pred_probs_sorted,2.0),
-                        precision_at_k(y_test_sorted,y_pred_probs_sorted,5.0),
-                        precision_at_k(y_test_sorted,y_pred_probs_sorted,10.0),
-                        precision_at_k(y_test_sorted,y_pred_probs_sorted,20.0),
-                        precision_at_k(y_test_sorted,y_pred_probs_sorted,30.0),
-                        precision_at_k(y_test_sorted,y_pred_probs_sorted,50.0),
-                        recall_at_k(y_test_sorted,y_pred_probs_sorted,1.0),
-                        recall_at_k(y_test_sorted,y_pred_probs_sorted,2.0),
-                        recall_at_k(y_test_sorted,y_pred_probs_sorted,5.0),
-                        recall_at_k(y_test_sorted,y_pred_probs_sorted,10.0),
-                        recall_at_k(y_test_sorted,y_pred_probs_sorted,20.0),
-                        recall_at_k(y_test_sorted,y_pred_probs_sorted,30.0),
-                        recall_at_k(y_test_sorted,y_pred_probs_sorted,50.0)
-                       ]
-                    if NOTEBOOK == 1:
-                        plot_precision_recall_n(y_test,y_pred_probs,clf)
-                except IndexError as e:
-                    print('Error:',e)
-                    continue
-    results_df.to_csv('./results/'+datetime.now().strftime("%m-%d-%Y, %H:%M:%S"), index=False)
-    return results_df
-
-'''
-
-def main():
-
-    # define grid to use: test, small, large
-    grid_size = 'test'
-    clfs, grid = define_clfs_params(grid_size)
-
-    # define models to run
-    models_to_run=['RF','DT','KNN', 'ET', 'AB', 'GB', 'LR', 'NB']
-
-    # load data from csv
-    df = pd.read_csv("/Users/rayid/Projects/uchicago/Teaching/MLPP-2017/Homeworks/Assignment 2/credit-data.csv")
-
-    # select features to use
-    features  =  ['RevolvingUtilizationOfUnsecuredLines', 'DebtRatio', 'age', 'NumberOfTimes90DaysLate']
-    X = df[features]
-    
-    # define label
-    y = df.SeriousDlqin2yrs
-
-    # call clf_loop and store results in results_df
-    results_df = clf_loop(models_to_run, clfs,grid, X,y)
-    if NOTEBOOK == 1:
-        results_df
-
-    # save to csv
-    results_df.to_csv('results.csv', index=False)
+def select_feature(data_x, data_y):
+    '''
+    Get the best set of features that used to build the model
+    Input:
+        data_x: ataframe of independent variables from trainning data
+        data_y: dataframe of dependent variable from training data
+    Return:
+        rank dict of all features
+    '''
+    logreg = LogisticRegression()
+    rfe = RFE(logreg, n_features_to_select = 20)
+    rfe = rfe.fit(data_x, data_y.values.ravel())
+    columns =  pd.DataFrame(data = data_x.columns)
+    return columns[rfe.support_], rfe.support_, rfe.ranking_
 
 
-if __name__ == '__main__':
-    main()
-'''
+def split_data(xs_df, y_df, size_test, seed):
+    '''
+    Split the data into 4 sub dataframe
+    Input:
+        xs_df: dataframe of independent variables
+        y_df: dataframe of dependent variable
+    Return:
+        Four sub dataframes for training and testing
+    '''
+    x_train, x_test, y_train, y_test = train_test_split(xs_df,
+        y_df, test_size= size_test, random_state = seed)
+    return x_train, x_test, y_train, y_test

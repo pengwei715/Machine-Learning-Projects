@@ -11,18 +11,8 @@ Plotting functions
 from __future__ import division
 import pandas as pd
 import numpy as np
-from sklearn import preprocessing, cross_validation, svm, metrics, tree, decomposition, svm
-from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, GradientBoostingClassifier, AdaBoostClassifier,BaggingClassifier
-from sklearn.linear_model import LogisticRegression, Perceptron, SGDClassifier, OrthogonalMatchingPursuit, RandomizedLogisticRegression
-from sklearn.neighbors.nearest_centroid import NearestCentroid
-from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.dummy import DummyClassifier
-from sklearn.cross_validation import train_test_split
-from sklearn.grid_search import ParameterGrid
 from sklearn.metrics import *
-from sklearn.preprocessing import StandardScaler
 import random
 import matplotlib.pyplot as plt
 from scipy import optimize
@@ -30,11 +20,6 @@ import time
 import seaborn as sns
 from sklearn.externals import joblib
 from datetime import datetime
-import pandas as pd 
-import numpy as np 
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.metrics import *
 
 def hist_one(df, col_name):
     '''
@@ -134,7 +119,7 @@ def recall_at_k(y_true, y_scores, k):
     return recall
 
 def baseline(X_train, X_test, y_train, y_test):
-    clf = DummyClassifier(strategy='most_frequent', random_state=0)
+    clf = DummyClassifier(strategy='stratified', random_state=0)
     clf.fit(X_train, y_train)
     return clf
 
@@ -181,6 +166,7 @@ def plot_precision_recall_n(y_true, y_prob, model_name, output_type):
     plt.title(name)
     if (output_type == 'save'):
         plt.savefig(name, close=True)
+        plt.close()
     elif (output_type == 'show'):
         plt.show()
     else:
@@ -200,6 +186,7 @@ def plot_roc(name, probs, y_true, output_type):
     plt.legend(loc="lower right")
     if (output_type == 'save'):
         plt.savefig(name, close=True)
+        plt.close()
     elif (output_type == 'show'):
         plt.show()
     else:
