@@ -38,6 +38,8 @@ from categorical data.
 
 7. \_util: all the help functions to help to do plotting
 
+8. time_validation: split the temporal data with rolling windows
+
 #### Report and write-up:
 
 - Report: report.pdf
@@ -49,6 +51,10 @@ All the ROC curve graph, and precision-recall graph
 #### Results
 
 The result of all models, contains information of which trainging data used, which testing data used, every score of different metrics at K.
+
+#### main.py
+
+Go through every model, every parament, every training data to build the model, and generate the results and graphs with the testing data.
 
 ## Authors
 
