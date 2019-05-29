@@ -8,7 +8,7 @@ one is the AUC of ROC, the other one is the precision and recall curve.
 from __future__ import division
 import pandas as pd
 import numpy as np
-from sklearn import preprocessing, cross_validation, svm, metrics, tree, decomposition, svm
+from sklearn import preprocessing, svm, cross_validation, metrics, tree, decomposition, svm
 from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, GradientBoostingClassifier, AdaBoostClassifier,BaggingClassifier
 from sklearn.linear_model import LogisticRegression, Perceptron, SGDClassifier, OrthogonalMatchingPursuit, RandomizedLogisticRegression
 from sklearn.neighbors.nearest_centroid import NearestCentroid
@@ -36,7 +36,16 @@ from pipeline import evaluator as ev
 from pipeline import features_generator as fe
 from datetime import timedelta
 from pipeline import time_validate as tv
-import pdb
+import logging
+import sys
+
+# logging
+logger= logging.getLogger('mainloop')
+logger.setLevel(logging.INFO)
+ch = logging.StreamHandler(sys.stdout)
+fh = logging.FileHandler('mainloop.log')
+logger.addHandler(ch)
+logger.addHandler(fh)
 
 
 
@@ -104,7 +113,7 @@ def clf_loop(models_to_run, clfs, grid, X_train, X_test, y_train, y_test, grid_s
     baseline_y_pred_probs= baseline_clf.predict_proba(X_test)[:,1]
     baseline_y_pred_probs_sorted, base_y_test_sorted = zip(*sorted(zip(baseline_y_pred_probs, y_test), reverse=True))
     for index, clf in enumerate([clfs[x] for x in models_to_run]):
-        print(models_to_run[index])
+        logger.info(models_to_run[index])
         parameter_values = grid[models_to_run[index]]
         for p in ParameterGrid(parameter_values):
             try:
@@ -156,18 +165,25 @@ def run_time_validation(models_to_run, clfs, grid, grid_size,
     save the result into a csv file
     '''
     res_lst = []
+    count = 0
     for item in tv.generate_temporal_train_test(df, start_time, end_time, 
         prediction_window, update_window, time_col, x_cols, y_col):
+        logger.info('splitting the dataframe')
         x_train, x_test, y_train, y_test, train_start, train_end, test_start, test_end = item
         y_train, y_test = y_train.values.ravel(), y_test.values.ravel()
         x_train = transform(x_train)
         x_test = transform(x_test)
+        logger.info('cleaning and imputation and feature generateion begin here')
         cols = list(set(x_train.columns).intersection(set(x_test.columns)))
         x_train = x_train[cols]
         x_test = x_test[cols]
+        logger.info('using {} features to run the model'.format(len(cols)))
+        logger.info('feature_list: {} '.format('  '.join(cols)))
         temp = clf_loop(models_to_run, clfs, grid, x_train, x_test, y_train, y_test, grid_size,
             train_start, train_end, test_start, test_end )
         res_lst.append(temp)
+        logger.info('fininshed all models in {} split'.format(i))
+        count += 1
     res = pd.concat(res_lst)
     res.to_csv('./results/'+datetime.now().strftime("%m-%d-%Y, %H:%M:%S"), index=False)
     return res
@@ -195,11 +211,10 @@ def transform(df):
 
 
 if __name__ == '__main__':
-	df = lo.load('projects_2012_2013.csv')
-	df['date_posted'] = pd.to_datetime(df['date_posted'])
+    df = lo.load('projects_2012_2013.csv')
+    df['date_posted'] = pd.to_datetime(df['date_posted'])
     df['datefullyfunded'] = pd.to_datetime(df['datefullyfunded'])
-    df['not_funded_in_60_days'] = \
-        (df['datefullyfunded'] - df['date_posted'] >= pd.to_timedelta(60, unit='days')).astype('int')
+    df['not_funded_in_60_days'] = (df['datefullyfunded'] - df['date_posted'] >= pd.to_timedelta(60, unit='days')).astype('int')
     
     xs_lst = [item for item in df.columns if item not in {'date_posted',
                                                       'datefullyfunded',
@@ -211,7 +226,7 @@ if __name__ == '__main__':
     grid_size = 'test'
     clfs, grid = clas.define_clfs_params(grid_size)
     models_to_run=['DT','LR','RF','AB', 'GB','ET','BG']
-    res = main.run_time_validation(models_to_run, clfs, grid, grid_size,
+    res = run_time_validation(models_to_run, clfs, grid, grid_size,
         df, '2012-01-01' ,'2014-1-1' , 6, 6, 'date_posted', xs_lst, ['not_funded_in_60_days'])
 
     

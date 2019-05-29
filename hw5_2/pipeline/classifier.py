@@ -14,7 +14,7 @@ Build the following models
 from __future__ import division
 import pandas as pd
 import numpy as np
-from sklearn import preprocessing, cross_validation, svm, metrics, tree, decomposition, svm
+from sklearn import preprocessing,cross_validation, svm, metrics, tree, decomposition, svm
 from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, GradientBoostingClassifier, AdaBoostClassifier,BaggingClassifier
 from sklearn.linear_model import LogisticRegression, Perceptron, SGDClassifier, OrthogonalMatchingPursuit, RandomizedLogisticRegression
 from sklearn.neighbors.nearest_centroid import NearestCentroid
