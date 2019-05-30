@@ -63,7 +63,7 @@ The result of all models, contains information of which trainging data used, whi
 
 Go through every model, every parament, every training data to build the model, and generate the results and graphs with the testing data.
 
-#### CHANGES.md[./CHANGES.md]
+#### CHANGES.md [./CHANGES.md]
 
 The changes that I made based on the feedback of hw3
 
