@@ -1,6 +1,6 @@
 # Models evaluation
 
-## Improvment of skeleton of a machine learning pipe line
+## Improve the skeleton of a machine learning pipe line
 
 
 ### Prerequisites
@@ -10,13 +10,20 @@ All the packages' requirement is in the enviorment.yml
 To clone the enviorment, simply run the following:
 
 ```
-conda env create -f environment.yml
+conda env create -f env.yml
 ```
 
 To activate the enviorment, simply run the following:
 
 ```
 conda activate hw3_env
+```
+
+To run the pipeline, simply run the following:
+
+```
+python3 main.py
+
 ```
 
 ### Files
@@ -27,7 +34,7 @@ conda activate hw3_env
 
 2. explorer: give summary statistic, detect outlier, enerate distributions of variables, correlations between them.
 
-3. processer: fill NA with median, fill NA with mean, drop NAs. 
+3. preprocesser: fill NA with median, fill NA with mean, drop NAs. 
 
 4. features_generator: discretize a continuous variable, create binary/dummy variables
 from categorical data.
@@ -42,7 +49,7 @@ from categorical data.
 
 #### Report and write-up:
 
-- Report: report.pdf
+- Report: [report.pdf](./report.pdf)
 
 #### Graphs
 
@@ -55,6 +62,10 @@ The result of all models, contains information of which trainging data used, whi
 #### main.py
 
 Go through every model, every parament, every training data to build the model, and generate the results and graphs with the testing data.
+
+#### [CHANGES.md](./CHANGES.md)
+
+The changes that I made based on the feedback of hw3
 
 ## Authors
 
