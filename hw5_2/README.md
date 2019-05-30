@@ -1,6 +1,6 @@
 # Models evaluation
 
-## Improvment of skeleton of a machine learning pipe line
+## Improve the skeleton of a machine learning pipe line
 
 
 ### Prerequisites
