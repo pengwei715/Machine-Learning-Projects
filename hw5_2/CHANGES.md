@@ -23,7 +23,7 @@
 
 
 ### Changes
-This time, I use one notebook to analyze the results named results_analysis.ipnb (./results_analysis.ipnb)
+This time, I use one notebook to analyze the results named [results_analysis.ipnb](./results_analysis.ipnb)
 
 ### Code quality:
 - Suggestion in naming a file: processor.py -> data_process.py or preprocess.py
