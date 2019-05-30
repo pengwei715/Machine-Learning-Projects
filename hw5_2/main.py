@@ -38,15 +38,20 @@ from datetime import timedelta
 from pipeline import time_validate as tv
 import logging
 import sys
+import warnings
+warnings.filterwarnings('ignore')
+import pdb
 
 # logging
-logger= logging.getLogger('mainloop')
-logger.setLevel(logging.INFO)
+logger = logging.getLogger('mainloop')
 ch = logging.StreamHandler(sys.stdout)
-fh = logging.FileHandler('mainloop.log')
+fh = logging.FileHandler('./mainloop.log')
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+fh.setFormatter(formatter)
 logger.addHandler(ch)
 logger.addHandler(fh)
-
+logger.setLevel(logging.INFO)
 
 
 def clf_loop(models_to_run, clfs, grid, X_train, X_test, y_train, y_test, grid_size,
@@ -165,7 +170,7 @@ def run_time_validation(models_to_run, clfs, grid, grid_size,
     save the result into a csv file
     '''
     res_lst = []
-    count = 0
+    count = 1
     for item in tv.generate_temporal_train_test(df, start_time, end_time, 
         prediction_window, update_window, time_col, x_cols, y_col):
         logger.info('splitting the dataframe')
@@ -173,19 +178,19 @@ def run_time_validation(models_to_run, clfs, grid, grid_size,
         y_train, y_test = y_train.values.ravel(), y_test.values.ravel()
         x_train = transform(x_train)
         x_test = transform(x_test)
-        logger.info('cleaning and imputation and feature generateion begin here')
+        logger.info('cleaning and imputation and feature generateion ends')
         cols = list(set(x_train.columns).intersection(set(x_test.columns)))
         x_train = x_train[cols]
         x_test = x_test[cols]
         logger.info('using {} features to run the model'.format(len(cols)))
-        logger.info('feature_list: {} '.format('  '.join(cols)))
+        #logger.info('feature_list: {} '.format('  '.join(cols)))
         temp = clf_loop(models_to_run, clfs, grid, x_train, x_test, y_train, y_test, grid_size,
             train_start, train_end, test_start, test_end )
         res_lst.append(temp)
-        logger.info('fininshed all models in {} split'.format(i))
+        logger.info('fininshed all models in {} split'.format(count))
         count += 1
     res = pd.concat(res_lst)
-    res.to_csv('./results/'+datetime.now().strftime("%m-%d-%Y, %H:%M:%S"), index=False)
+    res.to_csv('./results/'+datetime.now().strftime("%m-%d-%Y-%H:%M:%S")+'.csv', index=False)
     return res
 
 
@@ -193,20 +198,23 @@ def transform(df):
     '''
     perform the clean data, imputation to the dataframe in the main loop
     '''
-    cat_cols =  ['school_city', 'school_district', 'school_county',
-                 'school_state', 'school_metro',
+    df.drop(columns = ['school_latitude','school_longitude'],inplace= True, axis=1)
+    cat_cols =  ['school_state', 'school_metro',
                 'teacher_prefix', 'resource_type',
                 'primary_focus_subject', 'primary_focus_area',
                 'secondary_focus_subject', 'secondary_focus_area',
                 'poverty_level', 'grade_level']
+    logger.info('make dummies from small number of values')
     df = fe.dummize(df, cat_cols)
+    top_k_dummies = ['school_city', 'school_district', 'school_county']
+    logger.info('make top 5 dummies')
+    df = fe.dummize_top_k(df, top_k_dummies,5, 'students_reached')
     tf_cols = ['school_charter', 'school_magnet',
                'eligible_double_your_impact_match']
     df = ex.replace_tfs(df, tf_cols)
     df['students_reached'] = df['students_reached'].fillna(0)
     df['total_price_norm'] = preprocessing.scale(df['total_price_including_optional_support'].astype('float64'))
     df['students_reached_norm'] = preprocessing.scale(df['students_reached'].astype('float64'))
-    #pdb.set_trace()
     return df
 
 
@@ -215,7 +223,6 @@ if __name__ == '__main__':
     df['date_posted'] = pd.to_datetime(df['date_posted'])
     df['datefullyfunded'] = pd.to_datetime(df['datefullyfunded'])
     df['not_funded_in_60_days'] = (df['datefullyfunded'] - df['date_posted'] >= pd.to_timedelta(60, unit='days')).astype('int')
-    
     xs_lst = [item for item in df.columns if item not in {'date_posted',
                                                       'datefullyfunded',
                                                       'not_funded_in_60_days',
@@ -225,8 +232,6 @@ if __name__ == '__main__':
                                                       'school_ncesid'}]
     grid_size = 'test'
     clfs, grid = clas.define_clfs_params(grid_size)
-    models_to_run=['DT','LR','RF','AB', 'GB','ET','BG']
+    models_to_run=['DT','LR','RF','AB','ET','BG','GB'] # 'KNN' ,'NB', 'SVM'
     res = run_time_validation(models_to_run, clfs, grid, grid_size,
         df, '2012-01-01' ,'2014-1-1' , 6, 6, 'date_posted', xs_lst, ['not_funded_in_60_days'])
-
-    

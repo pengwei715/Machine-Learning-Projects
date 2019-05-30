@@ -41,3 +41,23 @@ def dummize(df, cols):
         dataframe with a new dummy column
     '''
     return pd.get_dummies(data=df, columns=cols, dummy_na=True)
+
+def dummize_top_k(df, cols, k, count_col):
+    '''
+    make dummies from the cols that have too many discrete values
+    only take the top k categories
+    Input:
+        df: the dataframe
+        cols: the list of the discrete columns
+        k: number of top k
+        count-col: the column that used to count
+    Return:
+        the dataframe with new k+1 columns one is other
+    '''
+    for i, item in enumerate(cols):
+        lst = list(df.groupby(item).count().reset_index().sort_values(
+            by = count_col, ascending =False).head(k)[item])
+        need_to_replace = set(df[item].unique()) - set(lst)
+        df[item].fillna('unknown',inplace =True)
+        df[item]= df[item].replace(list(need_to_replace), 'other')
+    return dummize(df, cols)
